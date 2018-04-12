@@ -8,17 +8,14 @@ let blogs = [
     { title: 'title4', author: 'author4', body: 'If you are going to use a passage of Lorem Ipsum, you need to be sure there isnt anything embarrassing hidden in the middle of text.' },
 ];
 
-let BlogRow = (blog) =>
+let BlogRow = ({ title, author, body }) =>
     h('div', null, [
-        h('h1', null, blog.title),
-        h('h2', null, blog.author),
-        h('p', null, blog.body),
+        h('h1', null, title),
+        h('h2', null, author),
+        h('p', null, body),
     ]);
 
-let BlogList = ({ blogs }) => {
-    let vdoms = blogs.map(blog => h(BlogRow, blog, []));
-    return h('div', null, vdoms);
-};
+let BlogList = ({ blogs }) => h('div', null, blogs.map(blog => h(BlogRow, blog, [])));
 
 let Title = () => h('h1', null, 'REACT');
 
