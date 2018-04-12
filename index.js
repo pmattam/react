@@ -2,24 +2,54 @@ const root = document.querySelector('.react-root');
 const h = React.createElement;
 
 let blogs = [
-    { title: 'title1', author: 'author1', body: 'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.' },
-    { title: 'title2', author: 'author2', body: 'Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old.' },
-    { title: 'title3', author: 'author3', body: 'There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which dont look even slightly believable.' },
-    { title: 'title4', author: 'author4', body: 'If you are going to use a passage of Lorem Ipsum, you need to be sure there isnt anything embarrassing hidden in the middle of text.' },
+    { id: '1', title: 'Veggie Ipsum 1', author: 'Author 1', body: 'Veggies es bonus vobis, proinde vos postulo essum magis kohlrabi welsh onion daikon amaranth tatsoi tomatillo melon azuki bean garlic.', isEditable: false },
+    { id: '2', title: 'Veggie Ipsum 2', author: 'Author 2', body: 'Turnip greens yarrow ricebean rutabaga endive cauliflower sea lettuce kohlrabi amaranth water spinach avocado daikon napa cabbage asparagus winter purslane kale.', isEditable: false },
+    { id: '3', title: 'Veggie Ipsum 3', author: 'Author 3', body: 'Grape wattle seed kombu beetroot horseradish carrot squash brussels sprout chard.', isEditable: false },
+    { id: '4', title: 'Veggie Ipsum 4', author: 'Author 4', body: 'Beetroot water spinach okra water chestnut ricebean pea catsear courgette summer purslane.', isEditable: false },
 ];
 
-let BlogRow = ({ title, author, body }) =>
-    h('div', null, [
-        h('h1', null, title),
-        h('h2', null, author),
-        h('p', null, body),
+let removeBlog = (blog) => {
+    let { id } = blog;
+    blogs = blogs.filter(blog => id !== blog.id);
+    console.log(`Removed ${blog.title}`);
+    updatePage();
+};
+
+let changeEditBlogState = (blogState) => {
+    let blog = blogs.find(blog => blog.id === blogState.id);
+    blog.isEditable = !blog.isEditable;
+    console.log(blog.isEditable);
+    updatePage();
+};
+
+let updateBlogBody = (blogObject, value) => {
+    let blog = blogs.find(blog => blog.id === blogObject.id);
+    console.log(blog);
+    blog.body = value;
+    updatePage();
+};
+
+let DeleteButton = (blog) => h('button', { onClick: () => removeBlog(blog) }, 'Delete');
+
+let EditButton = (blogToEdit) => h('button', { onClick: () => changeEditBlogState(blogToEdit) }, 'Edit');
+
+let EditBlogForm = (blogToEditInForm) => h('form', null, [h('input', { 'value': blogToEditInForm.body, onChange: (event) => updateBlogBody(blogToEditInForm, event.target.value) })]);
+
+let BlogRow = (blog) =>
+    h('ul', null, [
+        h('h2', null, blog.title),
+        h('h3', null, blog.author),
+        h('p', null, blog.body),
+        h(DeleteButton, blog),
+        h(EditButton, blog),
+        blog.isEditable && h(EditBlogForm, blog)
     ]);
 
 let BlogList = ({ blogs }) => h('div', null, blogs.map(blog => h(BlogRow, blog, [])));
 
-let Title = () => h('h1', null, 'REACT');
+let Title = () => h('h1', null, 'About Veggies Ipsum Blog');
 
-let Greeting = ({ person }) => h('h1', { className: 'header' }, `Hello ${person}`);
+let Greeting = ({ person }) => h('h1', { className: 'header' }, `Good Morning ${person} !`);
 
 let Footer = () => h('footer', null, 'copyright 2018');
 
@@ -30,4 +60,6 @@ let Page = () => h('div', null, [
     h(Footer, null, [])
 ]);
 
-ReactDOM.render(h(Page, null, []), root);
+let updatePage = () => ReactDOM.render(h(Page, { blogs: blogs }, []), root);
+
+updatePage();
