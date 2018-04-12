@@ -8,14 +8,17 @@ let blogs = [
     { title: 'title4', author: 'author4', body: 'If you are going to use a passage of Lorem Ipsum, you need to be sure there isnt anything embarrassing hidden in the middle of text.' },
 ];
 
+let BlogRow = (props) =>
+    h('div', null, [
+        h('h1', null, props.title),
+        h('h2', null, props.author),
+        h('p', null, props.body),
+    ]);
+
 let BlogList = ({ blogs }) => {
     let vdoms = [];
     for (let blog of blogs) {
-        let blogVdom = h('div', null, [
-            h('h1', null, blog.title),
-            h('h2', null, blog.author),
-            h('p', null, blog.body),
-        ])
+        let blogVdom = h(BlogRow, blog);
         vdoms.push(blogVdom);
     }
     return h('div', null, vdoms);
