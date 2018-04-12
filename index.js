@@ -6,12 +6,6 @@ let blogs = [
     { title: 'title2', body: 'Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old.' }
 ];
 
-let BlogRow = ({ title, body }) =>
-    h('div', null, [
-        h('h1', null, title),
-        h('p', null, body),
-    ]);
-
 let BlogList = ({ blogs }) => {
     let vdoms = [];
     for (let blog of blogs) {
@@ -30,11 +24,11 @@ let Greeting = ({ person }) => h('h1', { className: 'header' }, `Hello ${person}
 
 let Footer = () => h('footer', null, 'copyright 2018');
 
-let wrapper = h('div', null, [
+let Page = () => h('div', null, [
     h(Title, null, []),
     h(Greeting, { person: 'Prathyusha' }, []),
     h(BlogList, { blogs: blogs }, []),
     h(Footer, null, [])
 ]);
 
-ReactDOM.render(wrapper, root);
+ReactDOM.render(h(Page, null, []), root);
