@@ -2,10 +2,10 @@ const root = document.querySelector('.react-root');
 const h = React.createElement;
 
 let blogs = [
-    { id: '1', title: 'Veggie Ipsum 1', author: 'Author 1', body: 'Veggies es bonus vobis, proinde vos postulo essum magis kohlrabi welsh onion daikon amaranth tatsoi tomatillo melon azuki bean garlic.' },
-    { id: '2', title: 'Veggie Ipsum 2', author: 'Author 2', body: 'Turnip greens yarrow ricebean rutabaga endive cauliflower sea lettuce kohlrabi amaranth water spinach avocado daikon napa cabbage asparagus winter purslane kale.' },
-    { id: '3', title: 'Veggie Ipsum 3', author: 'Author 3', body: 'Grape wattle seed kombu beetroot horseradish carrot squash brussels sprout chard.' },
-    { id: '4', title: 'Veggie Ipsum 4', author: 'Author 4', body: 'Beetroot water spinach okra water chestnut ricebean pea catsear courgette summer purslane.' },
+    { id: '1', title: 'Veggie Ipsum 1', author: 'Author 1', body: 'Veggies es bonus vobis' }
+    // { id: '2', title: 'Veggie Ipsum 2', author: 'Author 2', body: 'Turnip greens yarrow ricebean rutabaga endive cauliflower sea lettuce kohlrabi amaranth water spinach avocado daikon napa cabbage asparagus winter purslane kale.' },
+    // { id: '3', title: 'Veggie Ipsum 3', author: 'Author 3', body: 'Grape wattle seed kombu beetroot horseradish carrot squash brussels sprout chard.' },
+    // { id: '4', title: 'Veggie Ipsum 4', author: 'Author 4', body: 'Beetroot water spinach okra water chestnut ricebean pea catsear courgette summer purslane.' },
 ];
 
 let currentlyEditingBlog = null;
@@ -62,13 +62,36 @@ let Greeting = ({ person }) => h('h1', { className: 'header' }, `Good Morning ${
 
 let Footer = () => h('footer', null, 'copyright 2018');
 
-let Page = () => h('div', null, [
-    h(Title, null, []),
-    h(Greeting, { person: 'Prathyusha' }, []),
-    h(BlogList, { blogs: blogs }, []),
-    h(Footer, null, [])
-]);
+// let Page = () => h('div', null, [
+//     h(Title, null, []),
+//     h(Greeting, { person: 'Prathyusha' }, []),
+//     h(BlogList, { blogs: blogs }, []),
+//     h(Footer, null, [])
+// ]);
 
-let updatePage = () => ReactDOM.render(h(Page, { blogs: blogs }, []), root);
+// let updatePage = () => ReactDOM.render(h(Page, { blogs: blogs }, []), root);
 
-updatePage();
+// updatePage();
+
+class Page extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            blogs: blogs,
+            currentlyEditingBlog: null
+        }
+    }
+
+    render() {
+        let { blogs, currentlyEditingBlog } = this.state;
+
+        return h('div', null, [
+            h(Title, null, []),
+            h(Greeting, { person: 'Prathyusha' }, []),
+            h(BlogList, { blogs: blogs }, []),
+            h(Footer, null, [])
+        ]);
+    }
+}
+
+ReactDOM.render(h(Page), root)
