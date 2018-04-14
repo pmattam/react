@@ -8,46 +8,28 @@ let blogs = [
     { id: '4', title: 'Veggie Ipsum 4', author: 'Author 4', body: 'Beetroot water spinach okra' },
 ];
 
-let currentlyEditingBlog = null;
-
-let changeEditBlogState = (blogState) => {
-    currentlyEditingBlog = Object.assign({}, blogState);
-    updatePage();
-};
-
-let updateBlogBody = (blogObject, value) => {
-    let blog = blogs.find(blog => blog.id === blogObject.id);
-    blogObject.body = value;
-    updatePage();
-};
-
-let saveUpdatedBlog = (blogBeingEditedToSave) => {
-    let blog = blogs.find(blog => blog.id === blogBeingEditedToSave.id);
-    Object.assign(blog, blogBeingEditedToSave);
-    currentlyEditingBlog = null;
-    updatePage();
-};
-
 let DeleteButton = ({ blog, removeBlog }) => h('button', { onClick: () => removeBlog(blog) }, 'Delete');
 
-let EditButton = (blogToEdit) => h('button', { onClick: () => changeEditBlogState(blogToEdit) }, 'Edit');
+let EditButton = ({ blog, changeEditBlogState }) => h('button', { onClick: () => changeEditBlogState(blog) }, 'Edit');
 
-let EditBlogForm = (blogToEditInForm) => h('form', null, [
+let EditBlogForm = ({ blog, currentlyEditingBlog, updateBlogTitle, updateBlogBody, saveUpdatedBlog }) => h('form', null, [
+    h('input', { 'value': currentlyEditingBlog.title, onChange: (event) => updateBlogTitle(currentlyEditingBlog, event.target.value) }),
     h('input', { 'value': currentlyEditingBlog.body, onChange: (event) => updateBlogBody(currentlyEditingBlog, event.target.value) }),
     h('button', { onClick: () => saveUpdatedBlog(currentlyEditingBlog) }, 'Save')
 ]);
 
-let BlogRow = ({ blog, removeBlog }) =>
+let BlogRow = ({ blog, currentlyEditingBlog, removeBlog, changeEditBlogState, updateBlogTitle, updateBlogBody, saveUpdatedBlog }) =>
     h('ul', null, [
         h('h2', null, blog.title),
         h('h3', null, blog.author),
         h('p', null, blog.body),
         h(DeleteButton, { blog, removeBlog }),
-        h(EditButton, blog),
-        currentlyEditingBlog && blog.id === currentlyEditingBlog.id && h(EditBlogForm, blog)
+        h(EditButton, { blog, changeEditBlogState }),
+        currentlyEditingBlog && blog.id === currentlyEditingBlog.id && h(EditBlogForm, { blog, currentlyEditingBlog, updateBlogTitle, updateBlogBody, saveUpdatedBlog })
     ]);
 
-let BlogList = ({ blogs, removeBlog }) => h('div', null, blogs.map(blog => h(BlogRow, { blog, removeBlog })));
+let BlogList = ({ blogs, currentlyEditingBlog, removeBlog, changeEditBlogState, updateBlogTitle, updateBlogBody, saveUpdatedBlog }) =>
+    h('div', null, blogs.map(blog => h(BlogRow, { blog, currentlyEditingBlog, removeBlog, changeEditBlogState, updateBlogTitle, updateBlogBody, saveUpdatedBlog })));
 
 let Title = () => h('h1', null, 'About Veggies Ipsum Blog');
 
@@ -59,7 +41,7 @@ class Page extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            /* this stateBlogs has value of blogs array at the top */
+            /* this blogs has value of blogs array at the top */
             blogs: blogs,
             currentlyEditingBlog: null
         }
@@ -67,12 +49,9 @@ class Page extends React.Component {
 
     render() {
         let { blogs, currentlyEditingBlog } = this.state;
-
         /* state changes here when we remove a blog so moving it in here so when it does Page component handles rendering */
         let removeBlog = (rmBlog) => {
             let { id } = rmBlog;
-            // console.log("THIS STATE BLOGS", this.state.stateBlogs);
-            // let removedBlog = this.state.stateBlogs.filter(blog => id !== blog.id);
             let updatedBlogs = blogs.filter(blog => id !== blog.id);
             /* setState and update the data source */
             this.setState({
@@ -80,13 +59,52 @@ class Page extends React.Component {
             });
         };
 
-        return h('div', null, [
-            h(Title),
-            h(Greeting, { person: 'Prathyusha' }),
-            h(BlogList, { blogs, removeBlog }),
-            h(Footer)
-        ]);
+        let changeEditBlogState = (blogState) => {
+            this.setState({
+                currentlyEditingBlog: Object.assign({}, blogState)
+            });
+        };
+
+        let updateBlogTitle = (blogObjectForTitle, value) => {
+            blogObjectForTitle.title = value;
+            this.setState({
+                currentlyEditingBlog: Object.assign({}, blogObjectForTitle)
+            });
+        };
+        
+        let updateBlogBody = (blogObjectForBody, value) => {
+            blogObjectForBody.body = value;
+            this.setState({
+                currentlyEditingBlog: Object.assign({}, blogObjectForBody)
+            });
+        };
+
+        let saveUpdatedBlog = (blogBeingEditedToSave) => {
+            let blog = blogs.find(blog => blog.id === blogBeingEditedToSave.id);
+            Object.assign(blog, blogBeingEditedToSave);
+            this.setState({    
+                currentlyEditingBlog: null
+            });
+
+        };
+                
+        return (
+            <div>
+                <Title />
+                <Greeting person="Prathyusha" />
+                <BlogList 
+                    blogs={blogs} 
+                    currentlyEditingBlog={currentlyEditingBlog}
+                    removeBlog={removeBlog}
+                    changeEditBlogState={changeEditBlogState}
+                    updateBlogTitle={updateBlogTitle}
+                    updateBlogBody={updateBlogBody}
+                    saveUpdatedBlog={saveUpdatedBlog}
+                />
+            </div>
+        )
+            
     }
 }
 
-ReactDOM.render(h(Page), root)
+ReactDOM.render(<Page />, root);
