@@ -74,17 +74,29 @@ class Page extends React.Component {
 
     constructor(props) {
         super(props);
+        // state must be an object
         this.state = {
             blogs: blogs,
             currentlyEditingBlog: null
         }
     }
 
+    // render fn() don't take any parameters 
+    // react automatically calls render fn() 
+    // react automatically watches for this.state and automatically renders when there is a change
     render() {
+        // to access props/state ... this.props/this.state
+        // let blogs = this.state.blogs or let currentlyEditingBlog = this.state.currentlyEditingBlog
         let { blogs, currentlyEditingBlog } = this.state;
+
+        // "this" won't work if you use regular fns like fn() { }..as "this" has special meaning inside fn expression declaration
+        // only use arrow functions to make it work
         let removeBlog = (rmBlog) => {
             let { id } = rmBlog;
+            //let updatedBlogs = this.state.blogs.filter(blog => id !== blog.id); ... below is nothing but this
             let updatedBlogs = blogs.filter(blog => id !== blog.id);
+            // updates/replaces the state and re-render
+            // don't modify the data just replace with a copy of data when setState
             this.setState({
                 blogs: updatedBlogs
             });
@@ -117,6 +129,9 @@ class Page extends React.Component {
                 currentlyEditingBlog: null
             });
         };
+
+        //  let blogActions = ({ removeBlog, changeEditBlogState }); 
+        // can do destructuring like this if we multiple components
                 
         return (
             <div>
@@ -127,6 +142,7 @@ class Page extends React.Component {
                     currentlyEditingBlog={currentlyEditingBlog}
                     removeBlog={removeBlog}
                     changeEditBlogState={changeEditBlogState}
+                    // blogActions={blogActions} 
                     updateBlogTitle={updateBlogTitle}
                     updateBlogBody={updateBlogBody}
                     saveUpdatedBlog={saveUpdatedBlog}
@@ -138,3 +154,14 @@ class Page extends React.Component {
 }
 
 ReactDOM.render(<Page />, root);
+
+// new Page({ ... }).render()
+// h(BlogList, { blogs, currentlyEditingBlog, removeBlog: removeBlog}) // we can also  write like when passing the fn component in an object
+// new Page ({ props }) -- props are passed on to Page class by react by default
+// Lifting the state up
+// data sources...props and the state(anything that can change on the page which includes data source)
+// functional components are stateless components
+
+// changes to do in index.html to make it work for jsx only in development not in production
+// <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+// <script type="text/jsx" src="index.js"></script>
