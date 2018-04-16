@@ -75,10 +75,28 @@ class Page extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            blogs: blogs,
+            // blogs: blogs,
+            blogs: [],
             currentlyEditingBlog: null
         }
     }
+
+    componentDidMount() {
+        this.fetchData();
+    }
+
+    fetchData() {
+        fetch("https://jsonplaceholder.typicode.com/posts")
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    console.log(result);
+                    this.setState({
+                        blogs: result
+                    });
+                }
+            )
+    };
 
     render() {
         let { blogs, currentlyEditingBlog } = this.state;
@@ -119,10 +137,16 @@ class Page extends React.Component {
             });
         };
 
+        let refreshPage = () => {
+            this.fetchData();
+        };
+
         return (
             <div>
                 <Title />
                 <Greeting person="Prathyusha" />
+                <button onClick={refreshPage}>Refresh</button>
+                <select>{blogs.map(blog => <option>{blog.userId}</option>)}</select>
                 <BlogList 
                     blogs={blogs} 
                     currentlyEditingBlog={currentlyEditingBlog}
